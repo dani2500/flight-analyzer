@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Airport Investment Agent</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Airport Investment Agent</h1>
+    <span class="meta">US commercial airports · model: {{ model }}</span>
+    <details id="data">
+      <summary><span id="data-dot"></span> <span id="data-label">Checking data…</span></summary>
+      <div id="data-panel">
+        <p>Datasets are downloaded from public sources when the server starts and stored in
+          its <code>data/</code> folder. Live FAA status is fetched per question.</p>
+        <table id="data-files"></table>
+        <p class="hint">To refresh: stop the server, run <code>python -m airdata --force</code>, start it again.</p>
+      </div>
+    </details>
+    <button id="reset" type="button">New chat</button>
+  </header>
+
+  <main id="chat">
+    <div class="msg agent">
+      <p>I rank and compare US airports as renovation candidates, using public BTS and FAA
+        data and fixed scoring rules. Every number comes from those rules, not from the
+        language model. Try one of these:</p>
+      <div class="examples">
+        <button type="button">Which airports in New England are strong candidates for terminal expansion?</button>
+        <button type="button">Compare LA and Santa Ana airport congestion levels.</button>
+        <button type="button">What is the percentage of long haul flights out of Anchorage airport?</button>
+        <button type="button">What is the unmet flight demand in SFO airport and why?</button>
+      </div>
+      <p class="scope">Out of scope: non-US airports, construction costs, ROI in dollars, forecasts.</p>
+    </div>
+  </main>
+
+  <form id="form">
+    <input id="input" autocomplete="off" placeholder="Ask about an airport, a region or a comparison…" autofocus>
+    <div id="sendgroup">
+      <button id="send" type="submit">Send</button>
+      <button id="more" type="button" title="More ways to send" aria-haspopup="menu" aria-expanded="false" hidden>▾</button>
+      <div id="menu" role="menu" hidden>
+        <button id="mic" type="button" role="menuitem">🎤 Speak your question</button>
+      </div>
+    </div>
+    <button id="stop" type="button" title="Stop reading the answer aloud" hidden>■ Stop reading</button>
+    <label id="speak-label" hidden><input id="speak" type="checkbox"> Read answers aloud</label>
+    <label id="handsfree-label" hidden title="Listens, answers aloud, then listens again">
+      <input id="handsfree" type="checkbox"> Hands-free <span id="hf-status"></span>
+    </label>
+  </form>
+
+  <div id="prep" {% if ready %}hidden{% endif %}>
+    <div class="card" role="status">
+      <h2>Preparing data…</h2>
+      <p id="prep-text">The server is downloading its public datasets. The first start takes
+        several minutes; the chat unlocks by itself when everything is ready.</p>
+      <table id="prep-files"></table>
+    </div>
+  </div>
+
+  <script>const METRICS = {{ metrics | tojson }};</script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
